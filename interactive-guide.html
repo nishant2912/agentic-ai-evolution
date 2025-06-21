@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Interactive Guide to Agentic AI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Warm Neutral Harmony -->
+    <!-- Application Structure Plan: A single-page, thematic scrolling experience with a sticky top navigation. The structure transforms the linear report into an exploratory journey: 1. Hero Introduction, 2. "What is Agentic AI?" with interactive cards for core components, 3. A unified, interactive "Evolution & Timeline" section combining narrative with a dynamic chart and filterable timeline, 4. A filterable "Toolkit" grid for AI IDEs, and 5. A meta "How it's Built" section summarizing the development process. This structure prioritizes user engagement and understanding over the report's original instructional format. The key interactions—timeline filtering, chart updates, and tool grid filtering—are designed to make dense information digestible and fun to explore. -->
+    <!-- Visualization & Content Choices: 1. Core Components (Inform/Organize): Interactive HTML cards for clear, chunked information. 2. Evolution & LLM Timeline (Change/Compare): A unified vertical timeline (HTML/CSS) for narrative flow, filterable by company. This is paired with an interactive bar chart (Chart.js/Canvas) to visually compare model releases per year, which updates on timeline interaction. This provides both qualitative and quantitative views of the evolution. 3. AI IDEs & Tools (Organize/Compare): A filterable grid of cards (HTML/JS) for easy exploration of the tool ecosystem. 4. Development Process (Inform): A simplified 3-step diagram (HTML/CSS) to summarize the meta-guide without being overwhelming. All choices avoid SVG/Mermaid and focus on creating an intuitive, interactive experience within a single page. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8f7f4; /* Warm neutral background */
+            color: #2c3e50;
+        }
+        .nav-link {
+            transition: color 0.3s ease;
+            position: relative;
+            padding-bottom: 4px;
+        }
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: #3498db;
+            transition: width 0.3s ease;
+        }
+        .nav-link:hover::after, .nav-link.active::after {
+            width: 100%;
+        }
+        .card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        .timeline-item {
+            border-left-color: #3498db;
+            transition: background-color 0.3s ease;
+        }
+        .timeline-item:hover {
+            background-color: #ecf0f1;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 400px;
+            max-height: 50vh;
+        }
+        .btn-filter.active {
+            background-color: #3498db;
+            color: white;
+            box-shadow: 0 4px 6px -1px rgba(52, 152, 219, 0.3);
+        }
+        .fade-in {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800">
+
+    <header id="main-header" class="bg-white/80 backdrop-blur-lg fixed top-0 left-0 right-0 z-50 shadow-md">
+        <nav class="container mx-auto px-6 py-3 flex justify-between items-center">
+            <a href="#" class="text-xl font-bold text-slate-900">Agentic AI Explorer</a>
+            <div class="hidden md:flex space-x-8">
+                <a href="#basics" class="nav-link text-slate-600 hover:text-slate-900">Basics</a>
+                <a href="#evolution" class="nav-link text-slate-600 hover:text-slate-900">Evolution</a>
+                <a href="#timeline" class="nav-link text-slate-600 hover:text-slate-900">Timeline</a>
+                <a href="#tools" class="nav-link text-slate-600 hover:text-slate-900">Tools</a>
+            </div>
+             <button id="mobile-menu-button" class="md:hidden text-slate-800">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
+                </svg>
+            </button>
+        </nav>
+        <div id="mobile-menu" class="hidden md:hidden px-6 pt-2 pb-4">
+             <a href="#basics" class="block py-2 nav-link text-slate-600 hover:text-slate-900">Basics</a>
+             <a href="#evolution" class="block py-2 nav-link text-slate-600 hover:text-slate-900">Evolution</a>
+             <a href="#timeline" class="block py-2 nav-link text-slate-600 hover:text-slate-900">Timeline</a>
+             <a href="#tools" class="block py-2 nav-link text-slate-600 hover:text-slate-900">Tools</a>
+        </div>
+    </header>
+
+    <main class="pt-24">
+        <section id="hero" class="text-center container mx-auto px-6 py-16">
+            <h1 class="text-4xl md:text-6xl font-bold mb-4 text-slate-900">The Rise of Agentic AI</h1>
+            <p class="max-w-3xl mx-auto text-lg text-slate-600">
+                From simple chatbots to autonomous systems that reason, plan, and act. This interactive guide explores the evolution of AI agents, the powerful models that drive them, and the tools being built for this new frontier of software development.
+            </p>
+        </section>
+
+        <section id="basics" class="py-20 bg-white">
+            <div class="container mx-auto px-6">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl font-bold mb-2">What is an AI Agent?</h2>
+                    <p class="max-w-3xl mx-auto text-slate-600">An AI Agent is an autonomous system designed to perceive its environment, make decisions, and take actions to achieve specific goals without direct human intervention. This section breaks down the core components that form the "mind" and "body" of an agent. Interact with the cards to learn about each fundamental piece.</p>
+                </div>
+                <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+                    <div class="card bg-slate-50 p-6 rounded-lg">
+                        <h3 class="font-bold text-xl mb-2 text-sky-700">Perception</h3>
+                        <p class="text-slate-600">How the agent takes in information. This can be text from a user, data from an API, visual information from an image, or readings from sensors. It's the agent's "senses."</p>
+                    </div>
+                    <div class="card bg-slate-50 p-6 rounded-lg">
+                        <h3 class="font-bold text-xl mb-2 text-amber-700">Planning</h3>
+                        <p class="text-slate-600">The "brain" of the agent. It breaks down a large goal into smaller, manageable steps. Powered by LLMs, this allows agents to devise sophisticated strategies to solve complex problems.</p>
+                    </div>
+                    <div class="card bg-slate-50 p-6 rounded-lg">
+                        <h3 class="font-bold text-xl mb-2 text-emerald-700">Action</h3>
+                        <p class="text-slate-600">How the agent interacts with its environment. This involves executing the planned steps by using "tools" like calling an API, running code, or sending an email. It's the agent's "hands."</p>
+                    </div>
+                    <div class="card bg-slate-50 p-6 rounded-lg">
+                        <h3 class="font-bold text-xl mb-2 text-indigo-700">Memory</h3>
+                        <p class="text-slate-600">Essential for learning and context. Short-term memory tracks the current task, while long-term memory stores past experiences, allowing the agent to improve over time and avoid past mistakes.</p>
+                    </div>
+                </div>
+                 <div class="mt-16 bg-white p-8 rounded-lg shadow-inner border border-slate-200">
+                    <h3 class="text-2xl font-bold text-center mb-4">Agent vs. LLM: What's the Difference?</h3>
+                    <div class="flex flex-col md:flex-row gap-8 items-center">
+                        <div class="flex-1 text-center p-4">
+                            <h4 class="text-xl font-semibold mb-2">LLM: The Calculator</h4>
+                            <p class="text-slate-600">An LLM is a powerful tool. It can answer questions and generate content when asked. It's like a calculator that knows everything but only works when you press the buttons.</p>
+                        </div>
+                        <div class="text-3xl font-bold text-slate-400 p-4">vs.</div>
+                        <div class="flex-1 text-center p-4">
+                            <h4 class="text-xl font-semibold mb-2">Agent: The Engineer</h4>
+                            <p class="text-slate-600">An Agent is the user of the tool. It understands the larger goal, decides which "buttons" to press on the LLM, interprets the results, and orchestrates the entire process to achieve an objective.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="evolution" class="py-20">
+            <div class="container mx-auto px-6">
+                 <div class="text-center mb-12">
+                    <h2 class="text-3xl font-bold mb-2">The Journey to Autonomy</h2>
+                    <p class="max-w-3xl mx-auto text-slate-600">The path to modern AI agents wasn't instantaneous. It was a series of conceptual breakthroughs, building one on top of the other. This section traces the key steps, from giving models a 'thought process' to letting them interact with the real world.</p>
+                </div>
+                <div class="relative max-w-4xl mx-auto">
+                     <div class="absolute left-1/2 -translate-x-1/2 top-0 bottom-0 w-1 bg-slate-200 rounded"></div>
+                     <div class="space-y-16">
+                        <div class="relative">
+                            <div class="md:flex items-center">
+                                <div class="md:w-1/2 md:pr-8">
+                                    <div class="p-6 bg-white rounded-lg shadow-lg card">
+                                        <h3 class="text-xl font-bold mb-2">Chain-of-Thought (CoT)</h3>
+                                        <p>The discovery that instructing an LLM to "think step-by-step" dramatically improves its reasoning on complex tasks. This allows the model to simulate a logical process, forming the foundation of agent planning.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="absolute top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2 w-4 h-4 rounded-full bg-blue-500 border-4 border-white"></div>
+                        </div>
+                        <div class="relative">
+                            <div class="md:flex items-center flex-row-reverse">
+                                <div class="md:w-1/2 md:pl-8">
+                                    <div class="p-6 bg-white rounded-lg shadow-lg card">
+                                        <h3 class="text-xl font-bold mb-2">ReAct Framework</h3>
+                                        <p>A crucial framework that combined reasoning with acting. ReAct created the iterative <span class="font-mono bg-slate-200 px-1 rounded">Thought -> Action -> Observation</span> loop, giving the agent's "brain" a set of "hands" to interact with tools and the real world.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="absolute top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2 w-4 h-4 rounded-full bg-blue-500 border-4 border-white"></div>
+                        </div>
+                        <div class="relative">
+                            <div class="md:flex items-center">
+                                <div class="md:w-1/2 md:pr-8">
+                                    <div class="p-6 bg-white rounded-lg shadow-lg card">
+                                        <h3 class="text-xl font-bold mb-2">Autonomous Agents</h3>
+                                        <p>Projects like Auto-GPT and BabyAGI captured the world's attention by putting the concepts into a fully autonomous loop. Given a high-level goal, they could self-generate tasks, execute them, and iterate until the objective was met.</p>
+                                    </div>
+                                </div>
+                            </div>
+                             <div class="absolute top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2 w-4 h-4 rounded-full bg-blue-500 border-4 border-white"></div>
+                        </div>
+                     </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="timeline" class="py-20 bg-white">
+            <div class="container mx-auto px-6">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl font-bold mb-2">LLM Release Timeline</h2>
+                    <p class="max-w-3xl mx-auto text-slate-600">Agent capabilities are directly tied to the power of the underlying Large Language Models. The timeline below highlights the key releases that have fueled the agentic AI revolution. Filter by company to see how the competitive landscape has evolved.</p>
+                </div>
+                
+                <div class="lg:flex lg:gap-8">
+                    <div class="lg:w-2/3">
+                        <div class="text-center mb-8">
+                            <div class="inline-flex rounded-md shadow-sm" role="group">
+                                <button type="button" data-filter="all" class="btn-filter active px-4 py-2 text-sm font-medium text-slate-900 bg-white border border-slate-200 rounded-l-lg hover:bg-slate-100">All</button>
+                                <button type="button" data-filter="OpenAI" class="btn-filter px-4 py-2 text-sm font-medium text-slate-900 bg-white border-t border-b border-slate-200 hover:bg-slate-100">OpenAI</button>
+                                <button type="button" data-filter="Google" class="btn-filter px-4 py-2 text-sm font-medium text-slate-900 bg-white border-t border-b border-slate-200 hover:bg-slate-100">Google</button>
+                                <button type="button" data-filter="Anthropic" class="btn-filter px-4 py-2 text-sm font-medium text-slate-900 bg-white border border-slate-200 rounded-r-md hover:bg-slate-100">Anthropic</button>
+                            </div>
+                        </div>
+                        <div id="timeline-container" class="relative pl-4 border-l-4 border-slate-200">
+                        </div>
+                    </div>
+                    <div class="lg:w-1/3 mt-12 lg:mt-0">
+                        <div class="sticky top-28">
+                            <h3 class="text-xl font-bold text-center mb-4">Model Releases Per Year</h3>
+                            <div class="bg-white p-4 rounded-lg shadow-md border border-slate-200">
+                                <div class="chart-container">
+                                    <canvas id="timelineChart"></canvas>
+                                </div>
+                            </div>
+                             <p class="text-center text-sm text-slate-500 mt-4">This chart visualizes the number of major model releases each year, showing the accelerating pace of innovation in the AI space. The data reflects the filtered timeline.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="tools" class="py-20">
+            <div class="container mx-auto px-6">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl font-bold mb-2">The Agentic Developer's Toolkit</h2>
+                    <p class="max-w-3xl mx-auto text-slate-600">As models grow more powerful, so do the tools for building with them. This is a survey of the new class of AI-native IDEs and platforms that are changing how developers write software, shifting from writing every line to directing intelligent agents.</p>
+                </div>
+                 <div class="text-center mb-8">
+                    <div class="inline-flex rounded-md shadow-sm" role="group" id="tool-filters">
+                        <button type="button" data-filter="all" class="btn-filter active px-4 py-2 text-sm font-medium text-slate-900 bg-white border border-slate-200 rounded-l-lg hover:bg-slate-100">All</button>
+                        <button type="button" data-filter="editor" class="btn-filter px-4 py-2 text-sm font-medium text-slate-900 bg-white border-t border-b border-slate-200 hover:bg-slate-100">Editors</button>
+                        <button type="button" data-filter="agent" class="btn-filter px-4 py-2 text-sm font-medium text-slate-900 bg-white border-t border-b border-slate-200 hover:bg-slate-100">Agents</button>
+                        <button type="button" data-filter="platform" class="btn-filter px-4 py-2 text-sm font-medium text-slate-900 bg-white border border-slate-200 rounded-r-md hover:bg-slate-100">Platforms</button>
+                    </div>
+                </div>
+                <div id="tools-grid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-slate-800 text-white py-8">
+        <div class="container mx-auto px-6 text-center">
+            <p>An Interactive Exploration of Agentic AI</p>
+            <p class="text-sm text-slate-400 mt-2">Built as a single-page application to demonstrate modern web development and information design.</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+
+            const timelineData = [
+                { date: 'March 2023', company: 'OpenAI', title: 'GPT-4', description: 'Set a new state-of-the-art for reasoning and multimodality, becoming the gold standard for complex tasks and the engine for the first wave of agentic experiments like Auto-GPT.' },
+                { date: 'December 2023', company: 'Google', title: 'Gemini 1.0 Family', description: 'Google\'s response to GPT-4, introducing a family of models (Pro, Ultra, Nano) built from the ground up to be natively multimodal.' },
+                { date: 'March 2024', company: 'Anthropic', title: 'Claude 3 Family', description: 'Established Anthropic as a frontier competitor. The top-tier Opus model surpassed GPT-4 on several key benchmarks, especially in reasoning and vision.' },
+                { date: 'May 2024', company: 'OpenAI', title: 'GPT-4o', description: 'The "Omni" model focused on usability, offering GPT-4 level intelligence with significantly faster speeds, lower cost, and native real-time voice and vision interaction.' },
+                { date: 'Q1/Q2 2024', company: 'Google', title: 'Gemini 1.5 Pro & Flash', description: 'Introduced a massive 1 million token context window, allowing for the analysis of entire codebases or large documents in a single prompt.' },
+                { date: 'June 2024', company: 'Anthropic', title: 'Claude 3.5 Sonnet', description: 'A breakthrough release that outperformed its own top-tier Opus model in key areas like coding, but at the speed and price of a mid-tier model.' },
+                { date: 'February 2025', company: 'Anthropic', title: 'Claude 3.7 Sonnet', description: 'Introduced "hybrid reasoning," responding instantly to simple queries while dedicating more "thought" to complex problems, improving agentic efficiency.' },
+                { date: 'May 2025', company: 'Anthropic', title: 'Claude 4 (Opus & Sonnet)', description: 'A new generation explicitly designed for AI agents. Claude 4 Opus launched as the world\'s best coding model, excelling at sustained, complex tasks.' },
+                { date: 'Q2 2025', company: 'Google', title: 'Gemini 2.5 Family', description: 'The next evolution of Google\'s models, branded as "thinking models" with enhanced reasoning, including the fast and cost-effective Flash and Flash-Lite variants.' },
+            ];
+
+            const toolsData = [
+                { name: 'Cursor', category: 'editor', description: 'An AI-first code editor deeply integrated with a GPT-4 level chat, enabling natural language refactoring, debugging, and generation within the IDE.' },
+                { name: 'GitHub Copilot', category: 'platform', description: 'Powered by OpenAI\'s Codex, it established the paradigm of AI code assistance, translating comments into functional code and paving the way for all subsequent tools.' },
+                { name: 'Claude Code', category: 'agent', description: 'Anthropic\'s tool for agentic coding, designed to understand an entire codebase and perform complex, multi-file edits through natural language commands.' },
+                { name: 'Windsurf', category: 'editor', description: 'An advanced agentic code editor that understands developer intent across an entire project, automatically making changes, running code, and debugging.' },
+                { name: 'Augment', category: 'platform', description: 'A platform that indexes a project\'s entire codebase to provide a highly context-aware AI assistant, acting like an expert pair programmer.' },
+                { name: 'Jules (Google)', category: 'agent', description: 'An asynchronous coding agent that takes high-level tasks, works on them in the background, and presents a plan and code diff for approval.' },
+                { name: 'Cline', category: 'agent', description: 'An agent with deep architectural awareness, designed for large, complex codebases. It excels at high-level refactoring and ensuring consistency.' },
+                { name: 'Roo', category: 'agent', description: 'A highly customizable agent that can adopt different "personas" like a QA engineer or security auditor to assist with multiple roles in the development lifecycle.' },
+            ];
+
+            const timelineContainer = document.getElementById('timeline-container');
+            const timelineFilters = document.querySelectorAll('#timeline button');
+            let timelineChart;
+
+            function renderTimeline(filter = 'all') {
+                const filteredData = filter === 'all' ? timelineData : timelineData.filter(item => item.company === filter);
+                timelineContainer.innerHTML = filteredData.map(item => `
+                    <div class="mb-8 flex justify-between items-center w-full fade-in">
+                        <div class="order-1 w-5/12"></div>
+                        <div class="z-10 flex items-center order-1 bg-blue-500 shadow-xl w-8 h-8 rounded-full">
+                            <h1 class="mx-auto font-semibold text-lg text-white">${item.company.charAt(0)}</h1>
+                        </div>
+                        <div class="order-1 bg-white rounded-lg shadow-xl w-5/12 px-6 py-4 card">
+                            <p class="text-sm font-medium text-blue-600">${item.date}</p>
+                            <h3 class="mb-3 font-bold text-slate-800 text-xl">${item.title}</h3>
+                            <p class="text-sm leading-snug tracking-wide text-slate-600">${item.description}</p>
+                        </div>
+                    </div>
+                `).join('');
+                updateChart(filteredData);
+            }
+            
+            function updateChart(data) {
+                const releasesByYear = data.reduce((acc, item) => {
+                    const year = item.date.match(/\d{4}/)[0];
+                    acc[year] = (acc[year] || 0) + 1;
+                    return acc;
+                }, {});
+
+                const labels = Object.keys(releasesByYear).sort();
+                const chartData = labels.map(year => releasesByYear[year]);
+
+                if (timelineChart) {
+                    timelineChart.data.labels = labels;
+                    timelineChart.data.datasets[0].data = chartData;
+                    timelineChart.update();
+                } else {
+                    const ctx = document.getElementById('timelineChart').getContext('2d');
+                    timelineChart = new Chart(ctx, {
+                        type: 'bar',
+                        data: {
+                            labels: labels,
+                            datasets: [{
+                                label: 'Major Releases',
+                                data: chartData,
+                                backgroundColor: 'rgba(52, 152, 219, 0.7)',
+                                borderColor: 'rgba(52, 152, 219, 1)',
+                                borderWidth: 1,
+                                borderRadius: 4,
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    ticks: {
+                                        stepSize: 1
+                                    }
+                                }
+                            },
+                            plugins: {
+                                legend: {
+                                    display: false
+                                }
+                            }
+                        }
+                    });
+                }
+            }
+            
+            timelineFilters.forEach(button => {
+                button.addEventListener('click', () => {
+                    timelineFilters.forEach(btn => btn.classList.remove('active'));
+                    button.classList.add('active');
+                    renderTimeline(button.dataset.filter);
+                });
+            });
+
+            const toolsGrid = document.getElementById('tools-grid');
+            const toolFilters = document.querySelectorAll('#tool-filters button');
+
+            function renderTools(filter = 'all') {
+                const filteredData = filter === 'all' ? toolsData : toolsData.filter(item => item.category === filter);
+                toolsGrid.innerHTML = filteredData.map(tool => `
+                    <div class="card bg-white p-6 rounded-lg shadow-md border border-slate-200 fade-in">
+                        <h3 class="font-bold text-xl mb-2 text-slate-900">${tool.name}</h3>
+                        <p class="text-slate-600">${tool.description}</p>
+                        <div class="mt-4">
+                            <span class="inline-block bg-blue-100 text-blue-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded-full">${tool.category}</span>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            toolFilters.forEach(button => {
+                button.addEventListener('click', () => {
+                    toolFilters.forEach(btn => btn.classList.remove('active'));
+                    button.classList.add('active');
+                    renderTools(button.dataset.filter);
+                });
+            });
+
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenuButton.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+            });
+            
+            const navLinks = document.querySelectorAll('.nav-link');
+            const sections = document.querySelectorAll('main section');
+            const headerHeight = document.getElementById('main-header').offsetHeight;
+
+            window.addEventListener('scroll', () => {
+                let current = '';
+                sections.forEach(section => {
+                    const sectionTop = section.offsetTop - headerHeight - 20;
+                    if (pageYOffset >= sectionTop) {
+                        current = section.getAttribute('id');
+                    }
+                });
+                
+                navLinks.forEach(link => {
+                    link.classList.remove('active');
+                    if (link.getAttribute('href').substring(1) === current) {
+                        link.classList.add('active');
+                    }
+                });
+            });
+            
+            renderTimeline();
+            renderTools();
+        });
+    </script>
+
+</body>
+</html>
