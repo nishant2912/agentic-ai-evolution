@@ -98,6 +98,7 @@ First, install the necessary peer dependencies for React Navigation:
 
 With the dependencies installed, the main navigation structure can be created. For this website, a persistent top navigation bar is ideal. This will be implemented using a Tabs navigator within a route group. In the project structure, the (tabs) directory is a "layout group," meaning it doesn't add a segment to the URL but allows a shared layout file (\_layout.tsx) to be applied to all routes within it.  
 Create the file app/(tabs)/\_layout.tsx and add the following code. This file defines the tab-based navigation bar.  
+{% raw %}
 `// app/(tabs)/_layout.tsx`  
 `import React from 'react';`  
 `import { Tabs } from 'expo-router';`  
@@ -157,6 +158,7 @@ Create the file app/(tabs)/\_layout.tsx and add the following code. This file de
     `</Tabs>`  
   `);`  
 `}`
+{% endraw %}
 
 A critical aspect of web development is ensuring that navigation behaves as users expect, with proper URL handling in the browser's address bar and correct history management. Expo Router's \<Link\> component is essential here, as it renders a standard HTML \<a\> tag on the web, ensuring proper web navigation, search engine crawlability, and accessibility. The Tabs navigator from Expo Router automatically uses these links, providing a seamless web experience out of the box.
 
