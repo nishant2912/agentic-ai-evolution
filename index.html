@@ -545,22 +545,16 @@ Please format your response as a single block of HTML. Do not include \`<html>\`
             }
 
             function initializeTheme() {
-                let theme = localStorage.getItem('theme');
-                if (!theme) {
-                    // Default to dark mode if no preference or system preference
-                    theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-                    // As per requirement, default to dark mode if no other preference found
-                    if (theme === 'light' && !localStorage.getItem('theme') && !window.matchMedia('(prefers-color-scheme: dark)').matches && !window.matchMedia('(prefers-color-scheme: light)').matches) {
-                         theme = 'dark';
-                    }
+                let theme = localStorage.getItem('theme'); // Check for existing preference
+                if (theme) {
+                    // A preference exists, apply it
+                    applyTheme(theme);
+                } else {
+                    // No preference stored (e.g., first visit)
+                    theme = 'dark'; // Default to dark mode
+                    localStorage.setItem('theme', theme); // Store this default for next time
+                    applyTheme(theme);
                 }
-                 // Override to default to dark if no local storage setting yet
-                if (!localStorage.getItem('theme')) {
-                    theme = 'dark';
-                }
-
-                localStorage.setItem('theme', theme); // Ensure localStorage is set
-                applyTheme(theme);
             }
 
             function toggleTheme() {
